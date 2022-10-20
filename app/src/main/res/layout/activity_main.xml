@@ -16,6 +16,16 @@
         android:textColor="#41EAD6"
         android:textSize="35sp" />
 
+    <Button
+        android:id="@+id/menu_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/helloSPR"
+        android:background="@drawable/ic_action_loop"
+        android:onClick="changeController"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,11 +54,11 @@
             android:minHeight="48dp" />
 
         <Button
+            android:id="@+id/set_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/purple_200"
             android:text="@string/set"
-            android:id="@+id/set_ip"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -123,7 +133,8 @@
             android:id="@+id/button_B"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
@@ -137,7 +148,8 @@
             android:id="@+id/button_A"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_margin="5dp"
             android:background="@drawable/button_shape"
             android:backgroundTint="@color/purple_200"
@@ -148,8 +160,7 @@
             android:id="@+id/button_Y"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
             android:layout_margin="5dp"
             android:background="@drawable/button_shape"
             android:backgroundTint="@color/purple_200"
@@ -160,8 +171,7 @@
             android:id="@+id/button_X"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:layout_margin="5dp"
             android:background="@drawable/button_shape"
             android:backgroundTint="@color/purple_200"

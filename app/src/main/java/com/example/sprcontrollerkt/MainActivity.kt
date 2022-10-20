@@ -1,6 +1,7 @@
 package com.example.sprcontrollerkt
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -18,58 +19,22 @@ import com.example.sprcontrollerkt.udp.UdpClient
 class MainActivity : AppCompatActivity() {
     private val handler = Handler()
     private val client: UdpClient = UdpClient()
-    private var gamePad = GamePad()
+    private var stopSend = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE) //隐藏标题
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         ) //设置全屏
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         setContentView(R.layout.activity_main)
         initViews()
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent):Boolean {
-        return if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD) {
-            gamePad.setKeyCode(keyCode)
-            gamePad.updateKeyValue(1)
-            true
-        } else{
-            super.onKeyUp(keyCode, event)
-        }
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        return if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD) {
-            gamePad.setKeyCode(keyCode)
-            gamePad.updateKeyValue(0)
-            true
-        } else{
-            super.onKeyUp(keyCode, event)
-        }
-    }
-
-    override fun onGenericMotionEvent(event: MotionEvent): Boolean {
-        // Check that the event came from a game controller
-        return if (event.source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
-            && event.action == MotionEvent.ACTION_MOVE) {
-
-            // Process the movements starting from the
-            // earliest historical position in the batch
-//            (0 until event.historySize).forEach { i ->
-//                // Process the event at historical position i
-//                gamePad.processJoystickInput(event, i)
-//            }
-
-            // Process the current movement sample in the batch (position -1)
-            gamePad.processJoystickInput(event, -1)
-            true
-        } else {
-            super.onGenericMotionEvent(event)
-        }
+    fun changeController(view: View) {
+        stopSend = true
+        val intent = Intent(this, UsbController::class.java)
+        startActivity(intent)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -86,8 +51,8 @@ class MainActivity : AppCompatActivity() {
         val target_ip = findViewById<EditText>(R.id.target_ip)
 
         //虚拟按键读取值
-        var joy_x = 0
-        var joy_y = 0
+        var joy_x = 128
+        var joy_y = 128
         var but_A = 0
         var but_B = 0
         var but_X = 0
@@ -102,8 +67,8 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 udpSendMsg("$joy_x:$joy_y:$but_A:$but_B:$but_X:$but_Y:$but_L:$but_R")
                 textView.text = """
-                     $joy_x
-                     $joy_y
+                     ${joy_x-128}
+                     ${joy_y-128}
                      $but_A
                      $but_B
                      $but_X
@@ -111,7 +76,9 @@ class MainActivity : AppCompatActivity() {
                      $but_L
                      $but_R
                      """.trimIndent()
-                handler.postDelayed(this, 50)
+                if (!stopSend) {
+                    handler.postDelayed(this, 50)
+                }
             }
         }).start()
 
@@ -131,8 +98,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                joy_x = 0
-                joy_y = 0
+                joy_x = 128
+                joy_y = 128
             }
         })
         set_ip.setOnTouchListener { v: View?, event: MotionEvent ->
