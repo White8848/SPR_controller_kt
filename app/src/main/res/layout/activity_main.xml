@@ -33,14 +33,15 @@
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/target_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:width="200dp"
-            android:id="@+id/target_ip"
             android:autofillHints="ip"
             android:hint="@string/ip"
+            android:inputType="none"
             android:maxLines="1"
-            android:inputType="none" />
+            android:minHeight="48dp" />
 
         <Button
             android:layout_width="wrap_content"
