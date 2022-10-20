@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SPR Controller</string>
+    <string name="send">Send</string>
+    <string name="hello_spr">Hello SPR!</string>
+    <string name="l">L</string>
+    <string name="r">R</string>
+    <string name="b">B</string>
+    <string name="a">A</string>
+    <string name="y">Y</string>
+    <string name="x">X</string>
+    <string name="text1">joy_x: \njoy_y: \nbut_A: \nbut_B: \nbut_X: \nbut_Y: \nbut_L: \nbut_R: \n</string>
+    <string name="text2"> 0\n 0\n 0\n 0\n 0\n 0\n 0\n 0\n</string>
+    <string name="powered">Powered by Yirule</string>
+    <string name="ip">输入目标IP</string>
+    <string name="set">设定</string>
+</resources>
