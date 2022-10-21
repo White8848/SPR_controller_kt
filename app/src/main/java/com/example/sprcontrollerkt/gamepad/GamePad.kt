@@ -135,4 +135,12 @@ class GamePad {
 
         // Update the ship object based on the new x and y values
     }
+
+    fun getButton(): String {
+        return "${this.buttonA}:${this.buttonB}:${this.buttonX}:${this.buttonY}"
+    }
+
+    fun getJoystick():String{
+        return "${this.axisX}:${this.axisY}:${this.axisZ}:${this.axisRZ}:${this.axisLT}:${this.axisRT}"
+    }
 }

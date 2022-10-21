@@ -5,12 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.*
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.sprcontrollerkt.gamepad.GamePad
 import com.example.sprcontrollerkt.joystick.RockerView
 import com.example.sprcontrollerkt.udp.UdpClient
 
@@ -19,73 +19,59 @@ import com.example.sprcontrollerkt.udp.UdpClient
 class MainActivity : AppCompatActivity() {
     private val handler = Handler()
     private val client: UdpClient = UdpClient()
-    private var stopSend = false
+    private var stopUdpTask = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        ) //设置全屏
+
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_FULLSCREEN or//全屏
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or//延申内容至状态栏
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or//隐藏导航栏
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY//沉浸式
+
+        //生成界面
         setContentView(R.layout.activity_main)
+        //初始化界面元素
         initViews()
+        //开启udp发送线程
+        stopUdpTask = false
+        handler.post(UdpTask())
     }
 
     fun changeController(view: View) {
-        stopSend = true
+        stopUdpTask = true
         val intent = Intent(this, UsbController::class.java)
         startActivity(intent)
     }
 
+    //虚拟按键读取值
+    var joyX = 128
+    var joyY = 128
+    var butA = 0
+    var butB = 0
+    var butX = 0
+    var butY = 0
+    var butL = 0
+    var butR = 0
+
     @SuppressLint("ClickableViewAccessibility")
     private fun initViews() {
-        val textView = findViewById<TextView>(R.id.textView2)
+        //界面元素初始化
         val rockerView: RockerView = findViewById(R.id.rockerView1)
-        val button_A = findViewById<Button>(R.id.button_A)
-        val button_B = findViewById<Button>(R.id.button_B)
-        val button_X = findViewById<Button>(R.id.button_X)
-        val button_Y = findViewById<Button>(R.id.button_Y)
-        val button_L = findViewById<Button>(R.id.button_L)
-        val button_R = findViewById<Button>(R.id.button_R)
-        val set_ip = findViewById<Button>(R.id.set_ip)
-        val target_ip = findViewById<EditText>(R.id.target_ip)
+        val buttonA = findViewById<Button>(R.id.button_A)
+        val buttonB = findViewById<Button>(R.id.button_B)
+        val buttonX = findViewById<Button>(R.id.button_X)
+        val buttonY = findViewById<Button>(R.id.button_Y)
+        val buttonL = findViewById<Button>(R.id.button_L)
+        val buttonR = findViewById<Button>(R.id.button_R)
+        val buttonSetIP = findViewById<Button>(R.id.set_ip)
+        val targetIP = findViewById<EditText>(R.id.target_ip)
 
-        //虚拟按键读取值
-        var joy_x = 128
-        var joy_y = 128
-        var but_A = 0
-        var but_B = 0
-        var but_X = 0
-        var but_Y = 0
-        var but_L = 0
-        var but_R = 0
-
-        //开启udp消息发送线程
-        Thread(object : Runnable {
-            // 匿名类的Runnable接口
-            @SuppressLint("SetTextI18n")
-            override fun run() {
-                udpSendMsg("$joy_x:$joy_y:$but_A:$but_B:$but_X:$but_Y:$but_L:$but_R")
-                textView.text = """
-                     ${joy_x-128}
-                     ${joy_y-128}
-                     $but_A
-                     $but_B
-                     $but_X
-                     $but_Y
-                     $but_L
-                     $but_R
-                     """.trimIndent()
-                if (!stopSend) {
-                    handler.postDelayed(this, 50)
-                }
-            }
-        }).start()
-
-        // 设置回调模式
+        // 设置虚拟摇杆回调模式
         rockerView.setCallBackMode(RockerView.CallBackMode.CALL_BACK_MODE_MOVE)
 
-        // 监听摇动方向
+        // 监听摇杆移动方向
         rockerView.setOnAngleChangeListener(object : RockerView.OnAngleChangeListener {
             override fun onStart() {}
             override fun angle(angle: Double) {
@@ -93,68 +79,89 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun value(x: Float, y: Float, regionRadius: Float) {
-                joy_x = (x / regionRadius * 128 + 128).toInt()
-                joy_y = (y / regionRadius * 128 + 128).toInt()
+                joyX = (x / regionRadius * 128 + 128).toInt()
+                joyY = (y / regionRadius * 128 + 128).toInt()
             }
 
             override fun onFinish() {
-                joy_x = 128
-                joy_y = 128
+                joyX = 128
+                joyY = 128
             }
         })
-        set_ip.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonSetIP.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                client.setServerAddress(target_ip.text.toString())
+                client.setServerAddress(targetIP.text.toString())
             }
             false
         }
-        button_A.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonA.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                but_A = 1
+                butA = 1
             } else if (event.action == MotionEvent.ACTION_UP) {
-                but_A = 0
+                butA = 0
             }
             false
         }
-        button_B.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonB.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                but_B = 1
+                butB = 1
             } else if (event.action == MotionEvent.ACTION_UP) {
-                but_B = 0
+                butB = 0
             }
             false
         }
-        button_X.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonX.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                but_X = 1
+                butX = 1
             } else if (event.action == MotionEvent.ACTION_UP) {
-                but_X = 0
+                butX = 0
             }
             false
         }
-        button_Y.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonY.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                but_Y = 1
+                butY = 1
             } else if (event.action == MotionEvent.ACTION_UP) {
-                but_Y = 0
+                butY = 0
             }
             false
         }
-        button_L.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonL.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                but_L = 1
+                butL = 1
             } else if (event.action == MotionEvent.ACTION_UP) {
-                but_L = 0
+                butL = 0
             }
             false
         }
-        button_R.setOnTouchListener { v: View?, event: MotionEvent ->
+        buttonR.setOnTouchListener { _: View?, event: MotionEvent ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                but_R = 1
+                butR = 1
             } else if (event.action == MotionEvent.ACTION_UP) {
-                but_R = 0
+                butR = 0
             }
             false
+        }
+
+    }
+
+    private inner class UdpTask : Runnable {
+        val textView: TextView = findViewById(R.id.textView2)
+        override fun run() {
+            udpSendMsg("$joyX:$joyY:$butA:$butB:$butX:$butY:$butL:$butR")
+            textView.text = """
+                     ${joyX - 128}
+                     ${joyY - 128}
+                     $butA
+                     $butB
+                     $butX
+                     $butY
+                     $butL
+                     $butR
+                     """.trimIndent()
+            if (!stopUdpTask) {
+                handler.postDelayed(this, 50)
+            }
         }
     }
 
