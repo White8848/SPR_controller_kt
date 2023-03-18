@@ -69,27 +69,27 @@ class UdpClient {
                     /*
                         接收服务端数据
                      */
-                    val buf = ByteArray(1024)
-                    val serverMsgPacket = DatagramPacket(buf, buf.size)
-                    mSocket!!.receive(serverMsgPacket)
-
-                    //拿到服务端地址、端口号、发送过来的数据
-                    val address = serverMsgPacket.address
-                    val port = serverMsgPacket.port
-                    val data = serverMsgPacket.data
-                    val serverMsg = String(data, 0, data.size) //把接收到的字节数据转换成String
-
-                    /*
-                        以上是信息的发送和接收，写在sendMsg 方法体中，名副其实
-                        以下是对接收数据的处理，通过回调处理
-                     */
-                    //这里是子线程，
-                    // 但是 Handler 已同 MainLooper 进行绑定，
-                    // 则利用这个handle 去更新UI，等同于切回主线程更新UI
-                    mUIHandler.post { //数据借助回调外传
-                        //“切回了”主线程，在调用的时候，接收数据之后才能更新UI
-                        listener.onMsgReturned(serverMsg)
-                    }
+//                    val buf = ByteArray(1024)
+//                    val serverMsgPacket = DatagramPacket(buf, buf.size)
+//                    mSocket!!.receive(serverMsgPacket)
+//
+//                    //拿到服务端地址、端口号、发送过来的数据
+//                    val address = serverMsgPacket.address
+//                    val port = serverMsgPacket.port
+//                    val data = serverMsgPacket.data
+//                    val serverMsg = String(data, 0, data.size) //把接收到的字节数据转换成String
+//
+//                    /*
+//                        以上是信息的发送和接收，写在sendMsg 方法体中，名副其实
+//                        以下是对接收数据的处理，通过回调处理
+//                     */
+//                    //这里是子线程，
+//                    // 但是 Handler 已同 MainLooper 进行绑定，
+//                    // 则利用这个handle 去更新UI，等同于切回主线程更新UI
+//                    mUIHandler.post { //数据借助回调外传
+//                        //“切回了”主线程，在调用的时候，接收数据之后才能更新UI
+//                        listener.onMsgReturned(serverMsg)
+//                    }
                 } catch (e: Exception) {
                     mUIHandler.post { //异常回调
                         listener.onError(e)

@@ -305,13 +305,17 @@ class RockerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     ): Point {
         // 两点在X轴的距离
         val lenX = (touchPoint.x - centerPoint.x).toFloat()
+        Log.i(TAG, "getRockerPositionPoint: X :$lenX")
         // 两点在Y轴距离
         val lenY = (touchPoint.y - centerPoint.y).toFloat()
+        Log.i(TAG, "getRockerPositionPoint: Y :$lenY")
         // 两点距离
         val lenXY = sqrt((lenX * lenX + lenY * lenY).toDouble()).toFloat()
+        Log.i(TAG, "getRockerPositionPoint: 两点距离 :$lenXY")
         // 计算弧度
         val radian =
             acos((lenX / lenXY).toDouble()) * if (touchPoint.y < centerPoint.y) -1 else 1
+        Log.i(TAG, "getRockerPositionPoint: 弧度 :$radian")
         // 计算角度
         val angle = radian2Angle(radian)
 
