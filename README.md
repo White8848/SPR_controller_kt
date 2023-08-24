@@ -1,6 +1,6 @@
 # Easy Controller 
 
-#### Introduction
+## Introduction
 
 This app serves as a joystick controller for robot control and other testing tasks.
 
@@ -8,7 +8,7 @@ The current version of the app must be used with an ESP-32 receiver or another r
 
 Please feel free to raise any issues related to bugs or methods of using this app. I will update and fix any bugs that actually impact its basic functionality.
 
-#### How to Use
+## How to Use
 
 1.Download the APK on your Android phone, which must have a version above 8.
 
