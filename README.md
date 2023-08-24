@@ -1,13 +1,21 @@
-# SPR校内赛遥控器-Kotlin
+# Easy Controller 
 
-#### 介绍
+#### Introduction
 
-本项目为SPR机器人协会，校内赛指定虚拟遥控器，需配合接收端使用。
+This app serves as a joystick controller for robot control and other testing tasks.
 
-有任何关于遥控器的问题可以在本仓库提交Issuse，如果需求较为普遍会进行更新，特殊需求请自行学习相关开发工具并改写除核心通信代码外的其他内容。
+The current version of the app must be used with an ESP-32 receiver or another receiver capable of detecting the Wi-Fi hotspot created by your Android phone.
 
-#### 使用说明
+Please feel free to raise any issues related to bugs or methods of using this app. I will update and fix any bugs that actually impact its basic functionality.
 
-请下载apk后安装，开启热点后输入接收端ip即可连接。
+#### How to Use
 
-更多内容后续更新中......
+1.Download the APK on your Android phone, which must have a version above 8.
+
+2.Open the hotspot and ensure that the receiver is  connected to your phone.
+
+3.Input your receiver's IP address in the app.
+    
+4.Start controlling your robot!
+
+Additional functions are currently in development...
